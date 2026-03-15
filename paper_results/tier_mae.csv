@@ -1,0 +1,17 @@
+League,Tier,N,MAE
+Bundesliga,Low (0–3 goals),242,1.165
+Bundesliga,Mid (4–9 goals),67,2.731
+Bundesliga,High (10+ goals),13,6.0
+Bundesliga,Zero rate check,actual=42.5% pred=24.2%,
+PremierLeague,Low (0–3 goals),264,0.985
+PremierLeague,Mid (4–9 goals),54,2.685
+PremierLeague,High (10+ goals),19,8.316
+PremierLeague,Zero rate check,actual=43.6% pred=17.5%,
+LaLiga,Low (0–3 goals),305,1.082
+LaLiga,Mid (4–9 goals),49,2.714
+LaLiga,High (10+ goals),14,6.429
+LaLiga,Zero rate check,actual=50.3% pred=25.8%,
+SerieA,Low (0–3 goals),308,0.873
+SerieA,Mid (4–9 goals),43,2.512
+SerieA,High (10+ goals),15,6.6
+SerieA,Zero rate check,actual=44.0% pred=23.5%,

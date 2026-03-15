@@ -1,0 +1,9 @@
+League,Method,Train_N,Test_N_BP,MAE,RMSE,R2,vs_BasePaper_MAE,Improvement_pct
+Bundesliga,Rolling Window (Ours),1291,109,1.661,2.387,0.484,1.71,2.9
+Bundesliga,6-Season Filter (Base Paper approach),436,109,1.817,2.729,0.326,1.71,-6.3
+PremierLeague,Rolling Window (Ours),1357,112,1.812,3.329,0.499,1.93,6.1
+PremierLeague,6-Season Filter (Base Paper approach),448,112,1.911,3.204,0.535,1.93,1.0
+LaLiga,Rolling Window (Ours),1397,97,1.722,2.677,0.458,1.72,-0.1
+LaLiga,6-Season Filter (Base Paper approach),388,97,1.938,2.847,0.387,1.72,-12.7
+SerieA,Rolling Window (Ours),1450,106,1.179,1.974,0.486,1.29,8.6
+SerieA,6-Season Filter (Base Paper approach),424,106,1.311,2.076,0.431,1.29,-1.6

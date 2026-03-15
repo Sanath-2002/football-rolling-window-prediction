@@ -1,0 +1,5 @@
+Target_League,Source_Leagues,N_within_train,N_cross_train,Within_MAE,CrossFull_MAE,CrossDown_MAE,Delta_CrossFull,Delta_CrossDown,Finding
+Bundesliga,PremierLeague+LaLiga+SerieA,1291,4204,1.758,1.612,1.565,-0.146,-0.193,TRUE TRANSFER (cross beats within even at matched N)
+PremierLeague,Bundesliga+LaLiga+SerieA,1357,4138,1.671,1.626,1.736,-0.045,0.065,"DATA-SIZE BENEFIT (full cross wins, not downsampled)"
+LaLiga,Bundesliga+PremierLeague+SerieA,1397,4098,1.584,1.53,1.543,-0.054,-0.041,TRUE TRANSFER (cross beats within even at matched N)
+SerieA,Bundesliga+PremierLeague+LaLiga,1450,4045,1.301,1.279,1.32,-0.022,0.019,"DATA-SIZE BENEFIT (full cross wins, not downsampled)"

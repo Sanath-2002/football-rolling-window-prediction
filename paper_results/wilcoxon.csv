@@ -1,0 +1,5 @@
+ModelA,ModelB,MAE_A,MAE_B,Statistic,p_value,Significant_p05,Interpretation,League
+Ridge,LinearRegression,1.686,1.689,65.0,0.5533,False,"Ridge achieves lower MAE (not statistically significant, p=0.553)",Bundesliga
+XGBoost,Ridge,1.671,1.718,3171.5,0.256,False,"XGBoost achieves lower MAE (not statistically significant, p=0.256)",PremierLeague
+Ridge,LinearRegression,1.503,1.511,48.0,0.4386,False,"Ridge achieves lower MAE (not statistically significant, p=0.439)",LaLiga
+XGBoost,RandomForest,1.301,1.363,2028.0,0.0412,True,XGBoost significantly outperforms at p<0.05,SerieA
