@@ -1,39 +1,17 @@
 """
-=============================================================================
 Career-Trajectory-Aware Machine Learning for Football Player Goal Prediction:
 An Inclusive Season-Pair Sampling and Cross-League Generalisation Study
-=============================================================================
 
-FIXES APPLIED (from 17-point deep audit):
-  CRITICAL-1 : MultiOutputRegressor removed — not joint learning (0.000 diff)
-  CRITICAL-2 : R² now reported on BOTH full test AND base-paper subset (fair)
-  CRITICAL-3 : Career features reframed as empirical investigation, null result
-  SERIOUS-1  : Case 1 renamed Extended-Case-1 (10 corr + 3 career features)
-  SERIOUS-2  : Ablation A now uses FAIR comparison (same test players as base)
-  SERIOUS-3  : Cross-league downsampled ablation added (data-size vs transfer)
-  SERIOUS-4  : Significance language fixed — no "significantly outperforms"
-  MANAGEABLE-1: PremierLeague result acknowledged with explanation
-  MANAGEABLE-2: Zero-prediction bias analysed and reported
-  MANAGEABLE-3: Real XGBoost used when available; clear fallback message
 
-PAPER CONTRIBUTIONS (what the data actually proves):
+PAPER CONTRIBUTIONS 
   ① Inclusive rolling-window sampling reduces MAE 9–22% in 3/4 leagues
      vs restrictive 6-season filter — proven by fair Ablation A
   ② First cross-league evaluation: cross-league matches or beats within-league
      in 3/4 cases. TRUE transfer (not just data-size) confirmed in 2 leagues.
   ③ Career trajectory features: systematic null-result investigation —
-     no consistent benefit, which itself informs future feature engineering
+     no consistent benefit, which itself informs future feature engineering """
 
-Usage:
-    python football_paper_final.py
 
-    Set FAST_MODE = False before final paper submission for full grid search.
-    Install real XGBoost: pip install xgboost
-    Install SHAP:         pip install shap
-
-Outputs saved to ./paper_results/
-=============================================================================
-"""
 
 # ── Imports ───────────────────────────────────────────────────────────────
 import os, sys, warnings, time
@@ -131,9 +109,9 @@ BASE_PAPER_R2  = {'Bundesliga': 0.50, 'PremierLeague': 0.53, 'LaLiga': 0.48, 'Se
 BASE_PAPER_RMSE= {'Bundesliga': 2.33, 'PremierLeague': 3.22, 'LaLiga': 2.63, 'SerieA': 1.99}
 
 
-# =============================================================================
+
 # SECTION 1 — Data Loading & Cleaning
-# =============================================================================
+
 def load_and_clean(path: str, league: str) -> pd.DataFrame:
     """
     Load CSV, clean types, encode categories, aggregate multi-club rows.
@@ -173,9 +151,9 @@ def load_and_clean(path: str, league: str) -> pd.DataFrame:
     return df.groupby(['Player', 'Season_year'], as_index=False).agg(agg)
 
 
-# =============================================================================
+
 # SECTION 2 — Rolling Window Season-Pair Extraction
-# =============================================================================
+
 def extract_rolling_pairs(df: pd.DataFrame) -> pd.DataFrame:
     """
     For each player extract all CONSECUTIVE season pairs (t → t+1).
@@ -224,9 +202,9 @@ def extract_rolling_pairs(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(records).reset_index(drop=True)
 
 
-# =============================================================================
+
 # SECTION 3 — Feature Encoding
-# =============================================================================
+
 def encode_features(df: pd.DataFrame,
                     nation_encoder: LabelEncoder = None,
                     fit_encoder: bool = True):
@@ -255,9 +233,9 @@ def encode_features(df: pd.DataFrame,
     return df, nation_encoder
 
 
-# =============================================================================
+
 # SECTION 4 — Feature Case Definitions
-# =============================================================================
+
 def get_feature_cases(df_train: pd.DataFrame, include_league: bool = False) -> dict:
     """
     Three feature cases — corrected from Audit 11:
@@ -318,9 +296,9 @@ def get_feature_cases(df_train: pd.DataFrame, include_league: bool = False) -> d
     return {'ec1': ec1, 'case2': case2, 'case3': case3}
 
 
-# =============================================================================
+
 # SECTION 5 — Model Definitions
-# =============================================================================
+
 def get_models() -> dict:
     """
     Same 6 models as base paper (enables direct comparison).
@@ -370,9 +348,8 @@ def get_models() -> dict:
     }
 
 
-# =============================================================================
 # SECTION 6 — Metrics & Utilities
-# =============================================================================
+
 def compute_metrics(y_true, y_pred, label: str = '') -> dict:
     """
     Predictions rounded to non-negative integers (goals are discrete).
@@ -482,9 +459,8 @@ def tier_mae_breakdown(y_true, y_pred) -> dict:
     return out
 
 
-# =============================================================================
 # SECTION 7 — Run All Models (one league, one feature case)
-# =============================================================================
+
 def run_all_models(X_tr, y_tr, X_te, y_te, feature_cols,
                    league, case_label, target='Next_Gls'):
     """
@@ -518,9 +494,9 @@ def run_all_models(X_tr, y_tr, X_te, y_te, feature_cols,
     return pd.DataFrame(rows), best_model, best_preds
 
 
-# =============================================================================
+
 # SECTION 8 — Within-League Experiments
-# =============================================================================
+
 def experiment_within_league(all_data: dict, bp_players: dict):
     """
     Experiment 1 — Within-league evaluation.
@@ -615,9 +591,8 @@ def experiment_within_league(all_data: dict, bp_players: dict):
     return combined, best_models, tier_df
 
 
-# =============================================================================
 # SECTION 9 — Ablation A: Data Construction (FAIR comparison)
-# =============================================================================
+
 def ablation_a_data_construction(all_data: dict, raw_dfs: dict,
                                   bp_players: dict):
     """
@@ -739,9 +714,9 @@ def ablation_a_data_construction(all_data: dict, raw_dfs: dict,
     return pd.DataFrame(rows)
 
 
-# =============================================================================
+
 # SECTION 10 — Ablation B: Career Features (Null Result Investigation)
-# =============================================================================
+
 def ablation_b_career_features(all_data: dict):
     """
     Ablation B — Career features on vs off.
@@ -797,20 +772,12 @@ def ablation_b_career_features(all_data: dict):
     return df_out
 
 
-# =============================================================================
-# SECTION 11 — Ablation D: Cross-League (with downsampled control)
-# =============================================================================
-def ablation_d_cross_league(all_data: dict):
-    """
-    Ablation D — Leave-one-league-out cross-league evaluation.
-    FIXED (Audit 6 + Serious-3): Now includes DOWNSAMPLED cross-league
-    (same N as within-league) to separate data-size effect from true transfer.
 
-    Finding types:
-    - TRUE TRANSFER: cross wins even when downsampled to same N
-    - DATA-SIZE BENEFIT: cross only wins with full data (3x more N)
-    - WITHIN BETTER: within-league model is superior
-    """
+# SECTION 11 — Ablation D: Cross-League (with downsampled control)
+
+def ablation_d_cross_league(all_data: dict):
+    
+   
     print("\n" + "="*70)
     print("ABLATION D — Cross-League Transfer (with Data-Size Control)")
     print("  Tests: within vs cross-full vs cross-downsampled")
@@ -889,9 +856,8 @@ def ablation_d_cross_league(all_data: dict):
     return pd.DataFrame(rows), matrix
 
 
-# =============================================================================
 # SECTION 12 — Wilcoxon Tests (corrected language)
-# =============================================================================
+
 def run_wilcoxon_tests(all_data: dict):
     """
     Wilcoxon signed-rank tests between best and second-best models.
@@ -935,9 +901,9 @@ def run_wilcoxon_tests(all_data: dict):
     return pd.DataFrame(rows)
 
 
-# =============================================================================
-# SECTION 13 — SHAP Analysis (good practice, NOT claimed as novelty)
-# =============================================================================
+
+# SECTION 13 — SHAP Analysis 
+
 def run_shap_analysis(best_models: dict):
     """
     SHAP analysis: used as good methodological practice, NOT a paper
@@ -1014,10 +980,8 @@ def run_shap_analysis(best_models: dict):
         except Exception as e:
             print(f"  {league}: SHAP error — {e}")
 
-
-# =============================================================================
 # SECTION 14 — Figures
-# =============================================================================
+
 def generate_all_figures(within_df, abl_a_df, abl_b_df, abl_d_df,
                           tier_df, cross_matrix):
     """Generate all 8 publication-quality figures."""
@@ -1206,9 +1170,8 @@ def generate_all_figures(within_df, abl_a_df, abl_b_df, abl_d_df,
     print("\nAll figures saved.")
 
 
-# =============================================================================
 # SECTION 15 — Save Results to Excel
-# =============================================================================
+
 def save_results(within_df, abl_a_df, abl_b_df, abl_d_df,
                  tier_df, wilc_df):
     """Save all results tables as a single Excel workbook."""
@@ -1260,9 +1223,9 @@ def save_results(within_df, abl_a_df, abl_b_df, abl_d_df,
         abl_a_df.to_csv(f'{RESULTS_DIR}/ablation_a_fair.csv', index=False)
 
 
-# =============================================================================
+
 # SECTION 16 — Main Runner
-# =============================================================================
+
 def main():
     t_start = time.time()
 
